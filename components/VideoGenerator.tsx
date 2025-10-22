@@ -10,7 +10,7 @@ enum Stage {
   VIDEO,
 }
 
-const VideoGenerator: React.FC = () => {
+const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   const [stage, setStage] = useState<Stage>(Stage.PROMPT);
   const [prompt, setPrompt] = useState('');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('16:9');
@@ -34,13 +34,13 @@ const VideoGenerator: React.FC = () => {
     setFirstFrame(null);
     setLastFrame(null);
     try {
-      const firstFrameBase64 = await generateImageWithImagen(prompt, aspectRatio);
+      const firstFrameBase64 = await generateImageWithImagen(prompt, aspectRatio, apiKey);
       const firstFrameData = { base64: firstFrameBase64, mimeType: 'image/png' };
       setFirstFrame(firstFrameData);
       setIsLoadingFirst(false);
 
       setIsLoadingLast(true);
-      const lastFrameBase64 = await generateLastFrameWithNano(prompt, firstFrameData);
+      const lastFrameBase64 = await generateLastFrameWithNano(prompt, firstFrameData, apiKey);
       setLastFrame({ base64: lastFrameBase64, mimeType: 'image/png' });
       setStage(Stage.FRAMES);
     } catch (e: any) {
@@ -49,7 +49,7 @@ const VideoGenerator: React.FC = () => {
       setIsLoadingFirst(false);
       setIsLoadingLast(false);
     }
-  }, [prompt, aspectRatio]);
+  }, [prompt, aspectRatio, apiKey]);
 
   const handleGenerateVideo = useCallback(async () => {
     if (!firstFrame || !lastFrame) {
@@ -60,7 +60,7 @@ const VideoGenerator: React.FC = () => {
     setError(null);
     setGeneratedVideoUrl(null);
     try {
-      const videoUrl = await generateVideoWithVeo(prompt, firstFrame, lastFrame, aspectRatio, setVideoStatus);
+      const videoUrl = await generateVideoWithVeo(prompt, firstFrame, lastFrame, aspectRatio, setVideoStatus, apiKey);
       setGeneratedVideoUrl(videoUrl);
       setStage(Stage.VIDEO);
     } catch (e: any) {
@@ -69,7 +69,7 @@ const VideoGenerator: React.FC = () => {
       setIsLoadingVideo(false);
       setVideoStatus('');
     }
-  }, [prompt, firstFrame, lastFrame, aspectRatio]);
+  }, [prompt, firstFrame, lastFrame, aspectRatio, apiKey]);
 
   const handleStartOver = () => {
     setStage(Stage.PROMPT);

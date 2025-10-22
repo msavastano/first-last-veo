@@ -4,7 +4,7 @@ import { generateImageWithImagen } from '../services/geminiService';
 import Spinner from './Spinner';
 import { AspectRatio } from '../types';
 
-const ImageGenerator: React.FC = () => {
+const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   const [prompt, setPrompt] = useState('');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -20,14 +20,14 @@ const ImageGenerator: React.FC = () => {
     setError(null);
     setGeneratedImage(null);
     try {
-      const imageBytes = await generateImageWithImagen(prompt, aspectRatio);
+      const imageBytes = await generateImageWithImagen(prompt, aspectRatio, apiKey);
       setGeneratedImage(`data:image/png;base64,${imageBytes}`);
     } catch (e: any) {
       setError(e.message || 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, aspectRatio]);
+  }, [prompt, aspectRatio, apiKey]);
 
   const aspectRatios: AspectRatio[] = ['1:1', '16:9', '9:16', '4:3', '3:4'];
 

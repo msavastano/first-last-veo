@@ -5,7 +5,7 @@ import Spinner from './Spinner';
 import { fileToImageData } from '../utils/fileUtils';
 import { ImageData } from '../types';
 
-const ImageEditor: React.FC = () => {
+const ImageEditor: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   const [prompt, setPrompt] = useState('');
   const [originalImage, setOriginalImage] = useState<ImageData | null>(null);
   const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
@@ -39,14 +39,14 @@ const ImageEditor: React.FC = () => {
     setError(null);
     setEditedImage(null);
     try {
-      const imageBytes = await editImageWithNano(prompt, originalImage);
+      const imageBytes = await editImageWithNano(prompt, originalImage, apiKey);
       setEditedImage(`data:image/png;base64,${imageBytes}`);
     } catch (e: any) {
       setError(e.message || 'An unexpected error occurred during editing.');
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, originalImage]);
+  }, [prompt, originalImage, apiKey]);
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-gray-800 rounded-lg shadow-xl">

@@ -4,6 +4,7 @@ import ImageGenerator from './components/ImageGenerator';
 import ImageEditor from './components/ImageEditor';
 import VideoGenerator from './components/VideoGenerator';
 import ApiKeySelector from './components/ApiKeySelector';
+import ApiKeyPrompt from './components/ApiKeyPrompt';
 import { Tab } from './types';
 
 const Header = () => (
@@ -45,35 +46,34 @@ const TabSelector: React.FC<{ activeTab: Tab; setActiveTab: (tab: Tab) => void }
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('image-gen');
+  const [apiKey, setApiKey] = useState<string | null>(() => {
+    // In environments like Google AI Studio, the key is in process.env.
+    // We also check for GEMINI_API_KEY as a common alternative.
+    return process.env.API_KEY || process.env.GEMINI_API_KEY || null;
+  });
 
   const renderContent = useCallback(() => {
+    if (!apiKey) {
+        // This should not be reached if the top-level apiKey check is working,
+        // but it's a safe fallback.
+        return null;
+    }
     switch (activeTab) {
       case 'image-gen':
-        return <ImageGenerator />;
+        return <ImageGenerator apiKey={apiKey} />;
       case 'image-edit':
-        return <ImageEditor />;
+        return <ImageEditor apiKey={apiKey} />;
       case 'video-gen':
-        return <VideoGenerator />;
+        return <VideoGenerator apiKey={apiKey} />;
       default:
-        return <ImageGenerator />;
+        return <ImageGenerator apiKey={apiKey} />;
     }
-  }, [activeTab]);
+  }, [activeTab, apiKey]);
 
-  // This app is designed to run in an environment where API_KEY is set, like Google AI Studio.
-  if (!process.env.API_KEY) {
-    return (
-      <div className="min-h-screen bg-gray-900 text-gray-200 font-sans flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full text-center p-8 bg-gray-800 rounded-lg shadow-xl border border-red-500/50">
-          <h3 className="text-2xl font-bold text-red-400 mb-4">Environment Error</h3>
-          <p className="text-gray-300 mb-6">
-            This application is designed to run within the Google AI Studio environment, which provides the necessary API key.
-          </p>
-          <p className="text-sm text-gray-400">
-            Please open this application in Google AI Studio to continue.
-          </p>
-        </div>
-      </div>
-    );
+  // If no API key is found from the environment (e.g., when running locally
+  // without a build process), prompt the user to enter one.
+  if (!apiKey) {
+    return <ApiKeyPrompt onApiKeySubmit={setApiKey} />;
   }
 
   return (
@@ -81,6 +81,7 @@ const App: React.FC = () => {
       <Header />
       <main className="container mx-auto p-4 md:p-8">
         <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
+        {/* ApiKeySelector is a specific flow for Veo model usage within AI Studio */}
         <ApiKeySelector isVideoTabActive={activeTab === 'video-gen'}>
           <div className="mt-4">{renderContent()}</div>
         </ApiKeySelector>
