@@ -71,7 +71,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     }
   }, [prompt, firstFrame, lastFrame, aspectRatio, apiKey]);
 
-  const handleStartOver = () => {
+  const handleReset = () => {
     setStage(Stage.PROMPT);
     setPrompt('');
     setFirstFrame(null);
@@ -138,7 +138,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
 
       {stage === Stage.FRAMES && !isLoadingFirst && !isLoadingLast && (
         <div className="mt-6 flex justify-center gap-4">
-           <button onClick={handleStartOver} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Start Over</button>
+           <button onClick={handleReset} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Start Over</button>
            <button onClick={handleGenerateVideo} className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg">Generate Video</button>
         </div>
       )}
@@ -153,7 +153,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
       {stage === Stage.VIDEO && generatedVideoUrl && (
         <div className="mt-8 flex flex-col items-center">
             <video src={generatedVideoUrl} controls autoPlay loop className="max-w-full rounded-lg shadow-2xl"></video>
-            <button onClick={handleStartOver} className="mt-6 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg">Create Another Video</button>
+            <button onClick={handleReset} className="mt-6 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg">Create Another Video</button>
         </div>
       )}
 

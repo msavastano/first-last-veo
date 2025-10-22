@@ -48,6 +48,14 @@ const ImageEditor: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     }
   }, [prompt, originalImage, apiKey]);
 
+  const handleReset = () => {
+    setPrompt('');
+    setOriginalImage(null);
+    setOriginalImageUrl(null);
+    setEditedImage(null);
+    setError(null);
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-6 bg-gray-800 rounded-lg shadow-xl">
       <h2 className="text-3xl font-bold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">Image Editor</h2>
@@ -76,6 +84,13 @@ const ImageEditor: React.FC<{ apiKey: string }> = ({ apiKey }) => {
             className="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
           >
             {isLoading ? 'Editing...' : 'Apply Edits'}
+          </button>
+          <button
+            onClick={handleReset}
+            disabled={isLoading}
+            className="w-full bg-gray-600 hover:bg-gray-700 disabled:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg"
+          >
+            Reset
           </button>
         </div>
       </div>

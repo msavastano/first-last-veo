@@ -51,24 +51,6 @@ const App: React.FC = () => {
     return import.meta.env.VITE_GEMINI_API_KEY || null;
   });
 
-  const renderContent = useCallback(() => {
-    if (!apiKey) {
-        // This should not be reached if the top-level apiKey check is working,
-        // but it's a safe fallback.
-        return null;
-    }
-    switch (activeTab) {
-      case 'image-gen':
-        return <ImageGenerator apiKey={apiKey} />;
-      case 'image-edit':
-        return <ImageEditor apiKey={apiKey} />;
-      case 'video-gen':
-        return <VideoGenerator apiKey={apiKey} />;
-      default:
-        return <ImageGenerator apiKey={apiKey} />;
-    }
-  }, [activeTab, apiKey]);
-
   // If no API key is found from the environment (e.g., when running locally
   // without a build process), prompt the user to enter one.
   if (!apiKey) {
@@ -82,7 +64,17 @@ const App: React.FC = () => {
         <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
         {/* ApiKeySelector is a specific flow for Veo model usage within AI Studio */}
         <ApiKeySelector isVideoTabActive={activeTab === 'video-gen'}>
-          <div className="mt-4">{renderContent()}</div>
+          <div className="mt-4">
+            <div style={{ display: activeTab === 'image-gen' ? 'block' : 'none' }}>
+              <ImageGenerator apiKey={apiKey} />
+            </div>
+            <div style={{ display: activeTab === 'image-edit' ? 'block' : 'none' }}>
+              <ImageEditor apiKey={apiKey} />
+            </div>
+            <div style={{ display: activeTab === 'video-gen' ? 'block' : 'none' }}>
+              <VideoGenerator apiKey={apiKey} />
+            </div>
+          </div>
         </ApiKeySelector>
       </main>
     </div>

@@ -29,6 +29,12 @@ const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     }
   }, [prompt, aspectRatio, apiKey]);
 
+  const handleReset = () => {
+    setPrompt('');
+    setGeneratedImage(null);
+    setError(null);
+  };
+
   const aspectRatios: AspectRatio[] = ['1:1', '16:9', '9:16', '4:3', '3:4'];
 
   return (
@@ -64,6 +70,13 @@ const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
             className="w-full sm:w-auto mt-5 sm:mt-0 flex-grow bg-purple-600 hover:bg-purple-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
             >
             {isLoading ? 'Generating...' : 'Generate Image'}
+            </button>
+            <button
+              onClick={handleReset}
+              disabled={isLoading}
+              className="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 disabled:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg"
+            >
+              Reset
             </button>
         </div>
       </div>
