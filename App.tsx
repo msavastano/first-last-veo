@@ -47,9 +47,8 @@ const TabSelector: React.FC<{ activeTab: Tab; setActiveTab: (tab: Tab) => void }
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('image-gen');
   const [apiKey, setApiKey] = useState<string | null>(() => {
-    // In environments like Google AI Studio, the key is in process.env.
-    // We also check for GEMINI_API_KEY as a common alternative.
-    return process.env.API_KEY || process.env.GEMINI_API_KEY || null;
+    // Use the Vite-exposed environment variable.
+    return import.meta.env.VITE_GEMINI_API_KEY || null;
   });
 
   const renderContent = useCallback(() => {
