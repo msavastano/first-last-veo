@@ -19,9 +19,15 @@ const ApiKeySelector: React.FC<ApiKeySelectorProps> = ({ children, isVideoTabAct
       }
       setIsLoading(true);
       try {
-        // FIX: Added a check for window.aistudio since its type is now optional.
-        const hasKey = window.aistudio ? await window.aistudio.hasSelectedApiKey() : false;
-        setIsKeySelected(hasKey);
+        // Prioritize environment variable
+        if (import.meta.env.VITE_GEMINI_API_KEY) {
+          setIsKeySelected(true);
+        } else {
+            // Fallback to AI Studio check
+            // FIX: Added a check for window.aistudio since its type is now optional.
+            const hasKey = window.aistudio ? await window.aistudio.hasSelectedApiKey() : false;
+            setIsKeySelected(hasKey);
+        }
       } catch (e) {
         console.error("Error checking for API key:", e);
         setError("Could not verify API key status. Please try again later.");
