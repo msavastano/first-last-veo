@@ -59,6 +59,23 @@ const App: React.FC = () => {
     }
   }, [activeTab]);
 
+  // This app is designed to run in an environment where API_KEY is set, like Google AI Studio.
+  if (!process.env.API_KEY) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-gray-200 font-sans flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full text-center p-8 bg-gray-800 rounded-lg shadow-xl border border-red-500/50">
+          <h3 className="text-2xl font-bold text-red-400 mb-4">Environment Error</h3>
+          <p className="text-gray-300 mb-6">
+            This application is designed to run within the Google AI Studio environment, which provides the necessary API key.
+          </p>
+          <p className="text-sm text-gray-400">
+            Please open this application in Google AI Studio to continue.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 font-sans">
       <Header />

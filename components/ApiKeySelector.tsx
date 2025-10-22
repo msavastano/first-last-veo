@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { generateVideoWithVeo } from '../services/geminiService'; // Import a Veo function to test the key
 
@@ -20,7 +19,8 @@ const ApiKeySelector: React.FC<ApiKeySelectorProps> = ({ children, isVideoTabAct
       }
       setIsLoading(true);
       try {
-        const hasKey = await window.aistudio.hasSelectedApiKey();
+        // FIX: Added a check for window.aistudio since its type is now optional.
+        const hasKey = window.aistudio ? await window.aistudio.hasSelectedApiKey() : false;
         setIsKeySelected(hasKey);
       } catch (e) {
         console.error("Error checking for API key:", e);
@@ -35,10 +35,15 @@ const ApiKeySelector: React.FC<ApiKeySelectorProps> = ({ children, isVideoTabAct
 
   const handleSelectKey = async () => {
     try {
-      await window.aistudio.openSelectKey();
-      // Assume success to avoid race conditions and provide immediate feedback
-      setIsKeySelected(true); 
-      setError(null);
+      // FIX: Added a check for window.aistudio since its type is now optional.
+      if (window.aistudio) {
+        await window.aistudio.openSelectKey();
+        // Assume success to avoid race conditions and provide immediate feedback
+        setIsKeySelected(true); 
+        setError(null);
+      } else {
+        setError("AI Studio features are not available in this environment.");
+      }
     } catch (e) {
       console.error("Error opening API key selection:", e);
       setError("Failed to open the API key selection dialog.");

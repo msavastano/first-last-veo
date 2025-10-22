@@ -1,4 +1,3 @@
-
 export type Tab = 'image-gen' | 'image-edit' | 'video-gen';
 
 export type AspectRatio = '16:9' | '9:16' | '1:1' | '4:3' | '3:4';
@@ -16,6 +15,7 @@ declare global {
   }
 
   interface Window {
-    aistudio: AIStudio;
+    // FIX: Made 'aistudio' optional to resolve: All declarations of 'aistudio' must have identical modifiers.
+    aistudio?: AIStudio;
   }
 }
