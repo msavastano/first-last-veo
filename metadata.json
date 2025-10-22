@@ -1,0 +1,5 @@
+{
+  "name": "Creative Suite AI",
+  "description": "An AI-powered creative suite to generate and edit images, and produce videos from text and images. Harness the power of Imagen, Gemini Flash Image, and Veo to bring your ideas to life.",
+  "requestFramePermissions": []
+}
