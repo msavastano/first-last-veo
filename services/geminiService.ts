@@ -149,3 +149,30 @@ export const generateVideoWithVeo = async (
   const videoBlob = await videoResponse.blob();
   return URL.createObjectURL(videoBlob);
 };
+
+export const generateAppWithCodey = async (prompt: string, apiKey: string): Promise<string> => {
+    const ai = getAiClient(apiKey);
+    const fullPrompt = `Generate a complete, single-file React component in TypeScript using functional components and hooks. The component should be styled with Tailwind CSS. The user's request is: "${prompt}". Make sure to include all necessary imports.`;
+
+    // Note: Using a "preview" model, which may not be suitable for production.
+    const response = await ai.models.generateContent({
+      model: 'codey-2.0-preview',
+      contents: {
+          parts: [{ text: fullPrompt }]
+      },
+    });
+
+    if (response.candidates && response.candidates[0].content.parts.length > 0) {
+      const codePart = response.candidates[0].content.parts[0];
+      if (codePart.text) {
+          // A more robust way to handle the model's response format
+          const code = codePart.text.trim();
+          if (code.startsWith('```typescript')) {
+            return code.substring('```typescript'.length, code.length - 3).trim();
+          }
+          return code;
+      }
+    }
+
+    throw new Error("App generation failed or returned no code.");
+  };

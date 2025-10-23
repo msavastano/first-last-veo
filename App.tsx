@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react';
 import ImageGenerator from './components/ImageGenerator';
 import ImageEditor from './components/ImageEditor';
 import VideoGenerator from './components/VideoGenerator';
+import AppGenerator from './components/AppGenerator';
 import ApiKeySelector from './components/ApiKeySelector';
 import ApiKeyPrompt from './components/ApiKeyPrompt';
 import { Tab } from './types';
@@ -22,6 +23,7 @@ const TabSelector: React.FC<{ activeTab: Tab; setActiveTab: (tab: Tab) => void }
     { id: 'image-gen', label: 'Image Generation' },
     { id: 'image-edit', label: 'Image Editing' },
     { id: 'video-gen', label: 'Video Generation' },
+    { id: 'app-gen', label: 'App Generation' },
   ];
 
   return (
@@ -64,6 +66,8 @@ const App: React.FC = () => {
         return <ImageEditor apiKey={apiKey} />;
       case 'video-gen':
         return <VideoGenerator apiKey={apiKey} />;
+      case 'app-gen':
+        return <AppGenerator apiKey={apiKey} />;
       default:
         return <ImageGenerator apiKey={apiKey} />;
     }

@@ -1,4 +1,4 @@
-export type Tab = 'image-gen' | 'image-edit' | 'video-gen';
+export type Tab = 'image-gen' | 'image-edit' | 'video-gen' | 'app-gen';
 
 export type AspectRatio = '16:9' | '9:16' | '1:1' | '4:3' | '3:4';
 
