@@ -4,6 +4,8 @@ import { View } from '../types';
 interface SideMenuProps {
   activeView: View;
   setActiveView: (view: View) => void;
+  isCollapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }
 
 // FIX: Changed JSX.Element to React.ReactElement to resolve "Cannot find namespace 'JSX'" error.
@@ -35,26 +37,45 @@ const menuItems: { id: View; label: string; icon: React.ReactElement }[] = [
   },
 ];
 
-const SideMenu: React.FC<SideMenuProps> = ({ activeView, setActiveView }) => {
+const SideMenu: React.FC<SideMenuProps> = ({ activeView, setActiveView, isCollapsed, setCollapsed }) => {
   return (
-    <nav className="w-64 bg-gray-800 p-4 flex-shrink-0 h-[calc(100vh-65px)] sticky top-[65px] z-10">
-      <ul className="space-y-2">
-        {menuItems.map((item) => (
-          <li key={item.id}>
-            <button
-              onClick={() => setActiveView(item.id)}
-              className={`w-full flex items-center gap-3 p-3 rounded-lg text-left text-lg font-medium transition-colors duration-200 ${
-                activeView === item.id
-                  ? 'bg-purple-600 text-white shadow-lg'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-              }`}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
+    <nav className={`bg-gray-800 p-4 flex-shrink-0 h-[calc(100vh-65px)] sticky top-[65px] z-10 flex flex-col transition-all duration-300 ease-in-out ${isCollapsed ? 'w-20' : 'w-64'}`}>
+      <div className="flex-grow">
+        <ul className="space-y-2">
+          {menuItems.map((item) => (
+            <li key={item.id}>
+              <button
+                onClick={() => setActiveView(item.id)}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg text-lg font-medium transition-colors duration-200 ${ isCollapsed ? 'justify-center' : '' } ${
+                  activeView === item.id
+                    ? 'bg-purple-600 text-white shadow-lg'
+                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                }`}
+                title={isCollapsed ? item.label : undefined}
+              >
+                {item.icon}
+                {!isCollapsed && <span>{item.label}</span>}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button
+          onClick={() => setCollapsed(!isCollapsed)}
+          className={`w-full flex items-center gap-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 mt-4 border-t border-gray-700 pt-4 ${
+            isCollapsed ? 'justify-center' : ''
+          }`}
+          title={isCollapsed ? 'Expand Menu' : 'Collapse Menu'}
+        >
+          {isCollapsed ? (
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          ) : (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+              <span>Collapse</span>
+            </>
+          )}
+        </button>
     </nav>
   );
 };

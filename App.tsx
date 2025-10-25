@@ -20,6 +20,7 @@ const Header = () => (
 
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<View>('home');
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
   const [apiKey, setApiKey] = useState<string | null>(() => {
     return process.env.API_KEY || process.env.GEMINI_API_KEY || null;
   });
@@ -52,8 +53,13 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-gray-900 text-gray-200 font-sans">
       <Header />
       <div className="flex">
-        <SideMenu activeView={activeView} setActiveView={setActiveView} />
-        <main className="flex-grow p-4 md:p-8 overflow-y-auto h-[calc(100vh-65px)]">
+        <SideMenu 
+            activeView={activeView} 
+            setActiveView={setActiveView} 
+            isCollapsed={isMenuCollapsed}
+            setCollapsed={setIsMenuCollapsed}
+        />
+        <main className="flex-grow p-4 md:p-8 overflow-y-auto h-[calc(100vh-65px)] transition-all duration-300 ease-in-out">
            <div>{renderContent()}</div>
         </main>
       </div>
