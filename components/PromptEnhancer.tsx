@@ -45,7 +45,7 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
       
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <div className="w-full sm:w-auto">
+            <div className="w-full sm:w-40">
                 <label htmlFor="promptType" className="block text-sm font-medium text-gray-300 mb-1">Prompt For</label>
                 <select
                     id="promptType"
@@ -65,7 +65,7 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     placeholder="e.g., a cat in space"
-                    className="w-full p-2.5 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500 transition-shadow"
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500 transition-shadow"
                     rows={1}
                     disabled={isLoading}
                 />
