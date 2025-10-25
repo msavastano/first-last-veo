@@ -37,7 +37,7 @@ const Header = () => (
 
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<View>('home');
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(window.innerWidth < 768);
   const [apiKey, setApiKey] = useState<string | null>(() => {
     return process.env.API_KEY || process.env.GEMINI_API_KEY || null;
   });
