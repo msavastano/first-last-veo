@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Modality } from "@google/genai";
+import { GoogleGenAI, Modality, Chat } from "@google/genai";
 import { AspectRatio, ImageData } from '../types';
 
 const getAiClient = (apiKey: string) => {
@@ -148,4 +148,27 @@ export const generateVideoWithVeo = async (
   }
   const videoBlob = await videoResponse.blob();
   return URL.createObjectURL(videoBlob);
+};
+
+export const enhancePrompt = async (
+  userInput: string,
+  promptType: 'Image' | 'Video',
+  apiKey: string
+): Promise<string> => {
+  const ai = getAiClient(apiKey);
+  const systemInstruction =
+    promptType === 'Image'
+      ? "You are an expert prompt engineer for generative AI image models like Imagen. Your task is to take a user's basic idea and expand it into a detailed, descriptive, and vivid prompt that will generate a high-quality, artistic image. Focus on details like lighting, composition, style (e.g., photorealistic, oil painting, cinematic), mood, and specific visual elements. Provide only the enhanced prompt as a single block of text, without any conversational preamble or explanation."
+      : "You are an expert prompt engineer for generative AI video models like Veo. Your task is to take a user's basic idea and expand it into a detailed, descriptive prompt for a short video scene. Focus on describing the action, camera movement (e.g., dolly shot, panning), atmosphere, and visual style. The goal is a prompt that will generate a dynamic and cinematic video clip. Provide only the enhanced prompt as a single block of text, without any conversational preamble or explanation.";
+
+  const chat: Chat = ai.chats.create({
+    model: 'gemini-2.5-flash',
+    config: {
+      systemInstruction,
+    },
+  });
+
+  const response = await chat.sendMessage({ message: userInput });
+
+  return response.text;
 };
