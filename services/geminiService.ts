@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Modality, Chat } from "@google/genai";
 import { AspectRatio, ImageData } from '../types';
 
@@ -92,7 +91,6 @@ export const generateVideoWithVeo = async (
   onProgress: (status: string) => void,
   apiKey: string
 ): Promise<string> => {
-  // Re-create client to ensure it uses the latest key from the dialog
   const ai = getAiClient(apiKey);
 
   onProgress("Initializing video generation...");

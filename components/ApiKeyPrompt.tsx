@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 interface ApiKeyPromptProps {
@@ -20,7 +19,7 @@ const ApiKeyPrompt: React.FC<ApiKeyPromptProps> = ({ onApiKeySubmit }) => {
       <div className="max-w-md w-full text-center p-8 bg-gray-800 rounded-lg shadow-xl border border-purple-500/50">
         <h3 className="text-2xl font-bold text-purple-400 mb-4">Enter Your API Key</h3>
         <p className="text-gray-300 mb-6">
-          To use the Creative Suite AI, please provide your Google AI API key. This app runs directly in the browser and does not have a build process to read <code>.env.local</code> files.
+          To use the Creative Suite AI, please provide your Google AI API key. The app first checks for an API_KEY environment variable. If not found, you can enter it manually here.
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

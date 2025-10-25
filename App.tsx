@@ -1,9 +1,7 @@
-
 import React, { useState, useCallback } from 'react';
 import ImageGenerator from './components/ImageGenerator';
 import ImageEditor from './components/ImageEditor';
 import VideoGenerator from './components/VideoGenerator';
-import ApiKeySelector from './components/ApiKeySelector';
 import ApiKeyPrompt from './components/ApiKeyPrompt';
 import SideMenu from './components/SideMenu';
 import PromptEnhancer from './components/PromptEnhancer';
@@ -53,9 +51,7 @@ const App: React.FC = () => {
       <div className="flex">
         <SideMenu activeView={activeView} setActiveView={setActiveView} />
         <main className="flex-grow p-4 md:p-8 overflow-y-auto h-[calc(100vh-65px)]">
-           <ApiKeySelector isVideoTabActive={activeView === 'video-gen'}>
-            <div>{renderContent()}</div>
-           </ApiKeySelector>
+           <div>{renderContent()}</div>
         </main>
       </div>
     </div>
