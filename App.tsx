@@ -5,6 +5,7 @@ import VideoGenerator from './components/VideoGenerator';
 import ApiKeyPrompt from './components/ApiKeyPrompt';
 import SideMenu from './components/SideMenu';
 import PromptEnhancer from './components/PromptEnhancer';
+import Home from './components/Home';
 import { View } from './types';
 
 const Header = () => (
@@ -18,7 +19,7 @@ const Header = () => (
 );
 
 const App: React.FC = () => {
-  const [activeView, setActiveView] = useState<View>('image-gen');
+  const [activeView, setActiveView] = useState<View>('home');
   const [apiKey, setApiKey] = useState<string | null>(() => {
     return process.env.API_KEY || process.env.GEMINI_API_KEY || null;
   });
@@ -28,6 +29,8 @@ const App: React.FC = () => {
         return null;
     }
     switch (activeView) {
+      case 'home':
+        return <Home setActiveView={setActiveView} />;
       case 'image-gen':
         return <ImageGenerator apiKey={apiKey} />;
       case 'image-edit':
@@ -37,7 +40,7 @@ const App: React.FC = () => {
       case 'prompt-enhancer':
         return <PromptEnhancer apiKey={apiKey} />;
       default:
-        return <ImageGenerator apiKey={apiKey} />;
+        return <Home setActiveView={setActiveView} />;
     }
   }, [activeView, apiKey]);
 
