@@ -176,8 +176,8 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
             rows={3}
             disabled={isLoadingFirst || isLoadingLast}
           />
-           <div className="flex flex-col sm:flex-row gap-4 items-center">
-             <div className="w-full sm:w-auto">
+           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end">
+             <div>
                 <label htmlFor="savedPromptsGen" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
                 <select
                     id="savedPromptsGen"
@@ -190,7 +190,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                     {savedPrompts.map((p, i) => <option key={i} value={p}>{p.substring(0, 40)}...</option>)}
                 </select>
             </div>
-             <div className="w-full sm:w-auto">
+             <div>
                 <label htmlFor="aspectRatioVid" className="block text-sm font-medium text-gray-300 mb-1">Aspect Ratio</label>
                 <select
                     id="aspectRatioVid"
@@ -205,7 +205,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
              <button
               onClick={handleGenerateFrames}
               disabled={isLoadingFirst || isLoadingLast || !prompt}
-              className="w-full sm:w-auto mt-5 sm:mt-0 flex-grow bg-orange-600 hover:bg-orange-700 disabled:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
+              className="w-full sm:col-span-2 md:col-span-1 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
             >
               {isLoadingFirst || isLoadingLast ? 'Generating Frames...' : 'Generate Start & End Frames'}
             </button>
@@ -239,21 +239,23 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     <div className="space-y-6">
         <div>
             <label htmlFor="prompt-upload" className="block text-sm font-medium text-gray-300 mb-1">Scene Description (Prompt)</label>
-            <div className="flex gap-4">
-                <textarea
-                    id="prompt-upload"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="e.g., A cat chasing a laser dot across the floor"
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
-                    rows={2}
-                />
+            <div className="flex flex-col sm:flex-row gap-4 items-end">
+                <div className="w-full flex-grow">
+                    <textarea
+                        id="prompt-upload"
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        placeholder="e.g., A cat chasing a laser dot across the floor"
+                        className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
+                        rows={3}
+                    />
+                </div>
                  <div className="w-full sm:w-60">
                     <label htmlFor="savedPromptsUpload" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
                     <select
                         id="savedPromptsUpload"
                         onChange={(e) => e.target.value && setPrompt(e.target.value)}
-                        className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 h-full"
+                        className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
                         disabled={savedPrompts.length === 0}
                         value=""
                     >

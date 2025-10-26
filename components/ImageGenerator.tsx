@@ -59,8 +59,8 @@ const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
           rows={3}
           disabled={isLoading}
         />
-        <div className="flex flex-col sm:flex-row gap-4 items-center">
-             <div className="w-full sm:w-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end">
+             <div>
                 <label htmlFor="savedPrompts" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
                 <select
                     id="savedPrompts"
@@ -73,7 +73,7 @@ const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                     {savedPrompts.map((p, i) => <option key={i} value={p}>{p.substring(0, 40)}...</option>)}
                 </select>
             </div>
-            <div className="w-full sm:w-auto">
+            <div>
                 <label htmlFor="aspectRatio" className="block text-sm font-medium text-gray-300 mb-1">Aspect Ratio</label>
                 <select
                     id="aspectRatio"
@@ -88,7 +88,7 @@ const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
             <button
             onClick={handleGenerate}
             disabled={isLoading || !prompt}
-            className="w-full sm:w-auto mt-5 sm:mt-0 flex-grow bg-purple-600 hover:bg-purple-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
+            className="w-full sm:col-span-2 md:col-span-1 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
             >
             {isLoading ? 'Generating...' : 'Generate Image'}
             </button>

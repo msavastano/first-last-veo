@@ -57,8 +57,8 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
       <p className="text-center text-gray-400 mb-6">Refine your ideas into powerful prompts for better results.</p>
       
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <div className="w-full sm:w-40">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="sm:col-span-1">
                 <label htmlFor="promptType" className="block text-sm font-medium text-gray-300 mb-1">Prompt For</label>
                 <select
                     id="promptType"
@@ -71,21 +71,21 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                     <option value="Video">Video</option>
                 </select>
             </div>
-            <div className="flex-grow w-full">
+            <div className="sm:col-span-2">
                 <label htmlFor="user-prompt" className="block text-sm font-medium text-gray-300 mb-1">Your Idea</label>
-                 <textarea
+                 <input
+                    type="text"
                     id="user-prompt"
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     placeholder="e.g., a cat in space"
                     className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500 transition-shadow"
-                    rows={1}
                     disabled={isLoading}
                 />
             </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <div className="w-full sm:w-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+            <div>
                 <label htmlFor="savedPrompts" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
                 <select
                     id="savedPrompts"
@@ -98,13 +98,15 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                     {savedPrompts.map((p, i) => <option key={i} value={p}>{p.substring(0, 40)}...</option>)}
                 </select>
             </div>
-            <button
-                onClick={handleEnhance}
-                disabled={isLoading || !userInput}
-                className="w-full sm:w-auto flex-grow mt-5 sm:mt-0 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
-                >
-                {isLoading ? 'Enhancing...' : 'Enhance Prompt ✨'}
-            </button>
+            <div>
+                <button
+                    onClick={handleEnhance}
+                    disabled={isLoading || !userInput}
+                    className="w-full bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
+                    >
+                    {isLoading ? 'Enhancing...' : 'Enhance Prompt ✨'}
+                </button>
+            </div>
         </div>
       </div>
 
