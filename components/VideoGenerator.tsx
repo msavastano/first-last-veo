@@ -1,10 +1,13 @@
+
 import React, { useState, useCallback } from 'react';
 import { generateImageWithImagen, generateLastFrameWithNano, generateVideoWithVeo } from '../services/geminiService';
 import Spinner from './Spinner';
 import { AspectRatio, ImageData } from '../types';
 import { fileToImageData } from '../utils/fileUtils';
+import { useCreativeCloud } from '../context/CreativeCloudContext';
 
 type Workflow = 'generate' | 'upload';
+type FrameToSet = 'first' | 'last' | null;
 
 enum GenerateStage {
   PROMPT,
@@ -23,12 +26,16 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
 
   const [firstFramePreviewUrl, setFirstFramePreviewUrl] = useState<string | null>(null);
   const [lastFramePreviewUrl, setLastFramePreviewUrl] = useState<string | null>(null);
+  
+  const [isPickerOpen, setIsPickerOpen] = useState<FrameToSet>(null);
 
   const [isLoadingFirst, setIsLoadingFirst] = useState(false);
   const [isLoadingLast, setIsLoadingLast] = useState(false);
   const [isLoadingVideo, setIsLoadingVideo] = useState(false);
   const [videoStatus, setVideoStatus] = useState('');
   const [error, setError] = useState<string | null>(null);
+  
+  const { savedImages, savedPrompts } = useCreativeCloud();
 
   const handleGenerateFrames = useCallback(async () => {
     if (!prompt) {
@@ -76,24 +83,35 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     }
   }, [prompt, firstFrame, lastFrame, aspectRatio, apiKey]);
 
-  const handleFileUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    frameSetter: React.Dispatch<React.SetStateAction<ImageData | null>>,
-    previewSetter: React.Dispatch<React.SetStateAction<string | null>>
-  ) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, frame: 'first' | 'last') => {
     const file = e.target.files?.[0];
     if (file) {
       setError(null);
       try {
         const imageData = await fileToImageData(file);
-        frameSetter(imageData);
-        previewSetter(URL.createObjectURL(file));
+        const objectUrl = URL.createObjectURL(file);
+        if (frame === 'first') {
+          setFirstFrame({...imageData, previewUrl: objectUrl});
+          setFirstFramePreviewUrl(objectUrl);
+        } else {
+          setLastFrame({...imageData, previewUrl: objectUrl});
+          setLastFramePreviewUrl(objectUrl);
+        }
       } catch(err) {
         setError("Could not read the selected file.");
-        frameSetter(null);
-        previewSetter(null);
       }
     }
+  };
+  
+  const handleSelectFromLibrary = (image: ImageData) => {
+    if (isPickerOpen === 'first') {
+      setFirstFrame(image);
+      setFirstFramePreviewUrl(image.previewUrl || null);
+    } else if (isPickerOpen === 'last') {
+      setLastFrame(image);
+      setLastFramePreviewUrl(image.previewUrl || null);
+    }
+    setIsPickerOpen(null);
   };
 
   const handleStartOver = () => {
@@ -112,6 +130,25 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   };
   
   const aspectRatios: AspectRatio[] = ['16:9', '9:16'];
+  
+  const ImagePickerModal = () => (
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setIsPickerOpen(null)}>
+      <div className="bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+        <h3 className="text-2xl font-bold mb-4 text-orange-400">Select an Image for {isPickerOpen === 'first' ? 'First' : 'Last'} Frame</h3>
+        {savedImages.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {savedImages.map(image => (
+              <button key={image.id} onClick={() => handleSelectFromLibrary(image)} className="bg-gray-700 rounded-lg overflow-hidden transform hover:scale-105 transition-transform focus:ring-2 ring-orange-400">
+                <img src={image.previewUrl} alt="Saved asset" className="w-full h-40 object-cover"/>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-400 text-center py-8">Your library is empty. Save images from the Image Generator or Editor.</p>
+        )}
+      </div>
+    </div>
+  );
 
   const renderChoice = () => (
     <div className="text-center">
@@ -140,6 +177,19 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
             disabled={isLoadingFirst || isLoadingLast}
           />
            <div className="flex flex-col sm:flex-row gap-4 items-center">
+             <div className="w-full sm:w-auto">
+                <label htmlFor="savedPromptsGen" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
+                <select
+                    id="savedPromptsGen"
+                    onChange={(e) => e.target.value && setPrompt(e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
+                    disabled={isLoadingFirst || isLoadingLast || savedPrompts.length === 0}
+                    value=""
+                >
+                    <option value="">{savedPrompts.length > 0 ? 'Select a prompt...' : 'No saved prompts'}</option>
+                    {savedPrompts.map((p, i) => <option key={i} value={p}>{p.substring(0, 40)}...</option>)}
+                </select>
+            </div>
              <div className="w-full sm:w-auto">
                 <label htmlFor="aspectRatioVid" className="block text-sm font-medium text-gray-300 mb-1">Aspect Ratio</label>
                 <select
@@ -189,42 +239,59 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     <div className="space-y-6">
         <div>
             <label htmlFor="prompt-upload" className="block text-sm font-medium text-gray-300 mb-1">Scene Description (Prompt)</label>
-            <textarea
-                id="prompt-upload"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g., A cat chasing a laser dot across the floor"
-                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
-                rows={2}
-            />
+            <div className="flex gap-4">
+                <textarea
+                    id="prompt-upload"
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder="e.g., A cat chasing a laser dot across the floor"
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
+                    rows={2}
+                />
+                 <div className="w-full sm:w-60">
+                    <label htmlFor="savedPromptsUpload" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
+                    <select
+                        id="savedPromptsUpload"
+                        onChange={(e) => e.target.value && setPrompt(e.target.value)}
+                        className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 h-full"
+                        disabled={savedPrompts.length === 0}
+                        value=""
+                    >
+                        <option value="">{savedPrompts.length > 0 ? 'Select a prompt...' : 'No saved prompts'}</option>
+                        {savedPrompts.map((p, i) => <option key={i} value={p}>{p.substring(0, 40)}...</option>)}
+                    </select>
+                </div>
+            </div>
              <p className="text-xs text-gray-400 mt-1">A prompt is still needed to guide the video generation between the frames.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg">
+            <div className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg space-y-2">
                 <h3 className="text-lg font-semibold text-gray-300 mb-2">First Frame</h3>
                 <div className="w-full min-h-[200px] flex items-center justify-center aspect-video bg-gray-900/50 rounded">
                     {firstFramePreviewUrl ? 
                         <img src={firstFramePreviewUrl} alt="First frame preview" className="max-w-full max-h-[30vh] rounded-lg" /> :
-                        <p className="text-gray-500">Upload start frame</p>
+                        <p className="text-gray-500">Upload or load frame</p>
                     }
                 </div>
-                <label htmlFor="first-frame-upload" className="cursor-pointer mt-4 w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors">
-                    {firstFrame ? 'Change First Frame' : 'Upload First Frame'}
+                <button onClick={() => setIsPickerOpen('first')} disabled={savedImages.length === 0} className="w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed">Load from Library</button>
+                <label htmlFor="first-frame-upload" className="cursor-pointer w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors">
+                    Upload from Device
                 </label>
-                <input id="first-frame-upload" type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, setFirstFrame, setFirstFramePreviewUrl)} />
+                <input id="first-frame-upload" type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'first')} />
             </div>
-            <div className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg">
+            <div className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg space-y-2">
                 <h3 className="text-lg font-semibold text-gray-300 mb-2">Last Frame</h3>
                 <div className="w-full min-h-[200px] flex items-center justify-center aspect-video bg-gray-900/50 rounded">
                     {lastFramePreviewUrl ? 
                         <img src={lastFramePreviewUrl} alt="Last frame preview" className="max-w-full max-h-[30vh] rounded-lg" /> :
-                        <p className="text-gray-500">Upload end frame</p>
+                        <p className="text-gray-500">Upload or load frame</p>
                     }
                 </div>
-                <label htmlFor="last-frame-upload" className="cursor-pointer mt-4 w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors">
-                    {lastFrame ? 'Change Last Frame' : 'Upload Last Frame'}
+                <button onClick={() => setIsPickerOpen('last')} disabled={savedImages.length === 0} className="w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed">Load from Library</button>
+                <label htmlFor="last-frame-upload" className="cursor-pointer w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors">
+                     Upload from Device
                 </label>
-                <input id="last-frame-upload" type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, setLastFrame, setLastFramePreviewUrl)} />
+                <input id="last-frame-upload" type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'last')} />
             </div>
       </div>
       <div className="mt-6 flex flex-col items-center gap-4">
@@ -262,6 +329,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-gray-800 rounded-lg shadow-xl">
+      {isPickerOpen && <ImagePickerModal />}
       <h2 className="text-3xl font-bold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">Video Generation</h2>
       <p className="text-center text-gray-400 mb-8 h-5">{getSubtitle()}</p>
 

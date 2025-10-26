@@ -8,6 +8,7 @@ import SideMenu from './components/SideMenu';
 import PromptEnhancer from './components/PromptEnhancer';
 import Home from './components/Home';
 import { View } from './types';
+import { CreativeCloudProvider } from './context/CreativeCloudContext';
 
 const Logo = () => (
   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-3">
@@ -67,20 +68,22 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-200 font-sans">
-      <Header />
-      <div className="flex">
-        <SideMenu 
-            activeView={activeView} 
-            setActiveView={setActiveView} 
-            isCollapsed={isMenuCollapsed}
-            setCollapsed={setIsMenuCollapsed}
-        />
-        <main className="flex-grow p-4 md:p-8 overflow-y-auto h-[calc(100vh-65px)] transition-all duration-300 ease-in-out">
-           <div>{renderContent()}</div>
-        </main>
+    <CreativeCloudProvider>
+      <div className="min-h-screen bg-gray-900 text-gray-200 font-sans">
+        <Header />
+        <div className="flex">
+          <SideMenu 
+              activeView={activeView} 
+              setActiveView={setActiveView} 
+              isCollapsed={isMenuCollapsed}
+              setCollapsed={setIsMenuCollapsed}
+          />
+          <main className="flex-grow p-4 md:p-8 overflow-y-auto h-[calc(100vh-65px)] transition-all duration-300 ease-in-out">
+            <div>{renderContent()}</div>
+          </main>
+        </div>
       </div>
-    </div>
+    </CreativeCloudProvider>
   );
 };
 

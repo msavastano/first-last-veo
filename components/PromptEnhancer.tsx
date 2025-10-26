@@ -2,6 +2,7 @@
 import React, { useState, useCallback } from 'react';
 import { enhancePrompt } from '../services/geminiService';
 import Spinner from './Spinner';
+import { useCreativeCloud } from '../context/CreativeCloudContext';
 
 const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   const [promptType, setPromptType] = useState<'Image' | 'Video'>('Image');
@@ -10,6 +11,9 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  
+  const { addPrompt, savedPrompts } = useCreativeCloud();
 
   const handleEnhance = useCallback(async () => {
     if (!userInput) {
@@ -20,6 +24,7 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     setError(null);
     setEnhancedPrompt('');
     setCopySuccess(false);
+    setSaveSuccess(false);
     try {
       const result = await enhancePrompt(userInput, promptType, apiKey);
       setEnhancedPrompt(result);
@@ -35,6 +40,14 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
       navigator.clipboard.writeText(enhancedPrompt);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
+  const handleSave = () => {
+    if (enhancedPrompt) {
+      addPrompt(enhancedPrompt);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2000);
     }
   };
 
@@ -71,13 +84,28 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                 />
             </div>
         </div>
-        <button
-            onClick={handleEnhance}
-            disabled={isLoading || !userInput}
-            className="w-full bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
-            >
-            {isLoading ? 'Enhancing...' : 'Enhance Prompt ✨'}
-        </button>
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="w-full sm:w-auto">
+                <label htmlFor="savedPrompts" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
+                <select
+                    id="savedPrompts"
+                    onChange={(e) => e.target.value && setUserInput(e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500"
+                    disabled={isLoading || savedPrompts.length === 0}
+                    value=""
+                >
+                    <option value="">{savedPrompts.length > 0 ? 'Select a prompt...' : 'No saved prompts'}</option>
+                    {savedPrompts.map((p, i) => <option key={i} value={p}>{p.substring(0, 40)}...</option>)}
+                </select>
+            </div>
+            <button
+                onClick={handleEnhance}
+                disabled={isLoading || !userInput}
+                className="w-full sm:w-auto flex-grow mt-5 sm:mt-0 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
+                >
+                {isLoading ? 'Enhancing...' : 'Enhance Prompt ✨'}
+            </button>
+        </div>
       </div>
 
       {error && <p className="text-red-400 mt-4 text-center">{error}</p>}
@@ -87,13 +115,22 @@ const PromptEnhancer: React.FC<{ apiKey: string }> = ({ apiKey }) => {
           <Spinner />
         ) : enhancedPrompt ? (
             <>
-            <button 
-                onClick={handleCopy}
-                className="absolute top-3 right-3 bg-gray-600 hover:bg-gray-500 text-white font-semibold py-1 px-3 rounded-md text-sm transition-colors"
-            >
-                {copySuccess ? 'Copied!' : 'Copy'}
-            </button>
-            <p className="text-gray-200 whitespace-pre-wrap p-4 text-left w-full">{enhancedPrompt}</p>
+            <div className="absolute top-3 right-3 flex gap-2">
+                <button 
+                    onClick={handleSave}
+                    className="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-1 px-3 rounded-md text-sm transition-colors disabled:bg-gray-700 disabled:text-gray-400"
+                    disabled={saveSuccess}
+                >
+                    {saveSuccess ? 'Saved!' : 'Save'}
+                </button>
+                <button 
+                    onClick={handleCopy}
+                    className="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-1 px-3 rounded-md text-sm transition-colors"
+                >
+                    {copySuccess ? 'Copied!' : 'Copy'}
+                </button>
+            </div>
+            <p className="text-gray-200 whitespace-pre-wrap p-4 text-left w-full pt-10">{enhancedPrompt}</p>
             </>
         ) : (
           <p className="text-gray-500">Your enhanced prompt will appear here.</p>
