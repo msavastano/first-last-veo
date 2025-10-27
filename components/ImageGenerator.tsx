@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { generateImageWithImagen } from '../services/geminiService';
 import Spinner from './Spinner';
@@ -46,26 +45,26 @@ const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   const aspectRatios: AspectRatio[] = ['1:1', '16:9', '9:16', '4:3', '3:4'];
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-800 rounded-lg shadow-xl">
+    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
       <h2 className="text-3xl font-bold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Image Generation</h2>
-      <p className="text-center text-gray-400 mb-6">Describe an image and let Imagen bring it to life.</p>
+      <p className="text-center text-gray-600 dark:text-gray-400 mb-6">Describe an image and let Imagen bring it to life.</p>
       
       <div className="space-y-4">
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="e.g., A majestic lion wearing a crown, photorealistic"
-          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-shadow"
+          className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-shadow"
           rows={3}
           disabled={isLoading}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end">
              <div>
-                <label htmlFor="savedPrompts" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
+                <label htmlFor="savedPrompts" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Load Saved Prompt</label>
                 <select
                     id="savedPrompts"
                     onChange={(e) => e.target.value && setPrompt(e.target.value)}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500"
+                    className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500"
                     disabled={isLoading || savedPrompts.length === 0}
                     value=""
                 >
@@ -74,12 +73,12 @@ const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                 </select>
             </div>
             <div>
-                <label htmlFor="aspectRatio" className="block text-sm font-medium text-gray-300 mb-1">Aspect Ratio</label>
+                <label htmlFor="aspectRatio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Aspect Ratio</label>
                 <select
                     id="aspectRatio"
                     value={aspectRatio}
                     onChange={(e) => setAspectRatio(e.target.value as AspectRatio)}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500"
+                    className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500"
                     disabled={isLoading}
                 >
                     {aspectRatios.map(ar => <option key={ar} value={ar}>{ar}</option>)}
@@ -95,9 +94,9 @@ const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
         </div>
       </div>
 
-      {error && <p className="text-red-400 mt-4 text-center">{error}</p>}
+      {error && <p className="text-red-500 dark:text-red-400 mt-4 text-center">{error}</p>}
       
-      <div className="mt-8 min-h-[300px] bg-gray-700/50 rounded-lg flex items-center justify-center p-4 relative">
+      <div className="mt-8 min-h-[300px] bg-gray-100 dark:bg-gray-700/50 rounded-lg flex items-center justify-center p-4 relative">
         {isLoading ? (
           <Spinner />
         ) : generatedImage ? (
@@ -105,7 +104,7 @@ const ImageGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
             <img src={generatedImage} alt="Generated" className="max-w-full max-h-[60vh] rounded-lg shadow-lg" />
             <button
                 onClick={handleSaveImage}
-                className="absolute top-3 right-3 bg-gray-600 hover:bg-gray-500 text-white font-semibold py-1 px-3 rounded-md text-sm transition-colors disabled:bg-gray-700 disabled:text-gray-400"
+                className="absolute top-3 right-3 bg-white/50 dark:bg-gray-600/50 hover:bg-white/80 dark:hover:bg-gray-500/80 backdrop-blur-sm text-gray-800 dark:text-white font-semibold py-1 px-3 rounded-md text-sm transition-colors disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400"
                 disabled={saveSuccess}
               >
                 {saveSuccess ? 'Saved!' : 'Save to Library'}

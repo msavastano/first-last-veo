@@ -52,13 +52,13 @@ const WorkflowStep: React.FC<{
                         {icon}
                     </div>
                 </div>
-                <div className={`absolute top-0 -right-2 w-6 h-6 rounded-full bg-gray-900 border-2 ${colors.border} flex items-center justify-center text-xs font-bold`}>
+                <div className={`absolute top-0 -right-2 w-6 h-6 rounded-full bg-white dark:bg-gray-900 border-2 ${colors.border} flex items-center justify-center text-xs font-bold`}>
                     {step}
                 </div>
             </div>
             <div className="pt-2">
-                <h3 className="text-xl font-bold text-white">{title}</h3>
-                <p className="text-gray-400 mt-1 mb-3">{description}</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 mt-1 mb-3">{description}</p>
                 <button
                     onClick={onNavigate}
                     className={`${colors.button} text-white font-semibold py-2 px-4 rounded-lg transition-transform transform hover:scale-105`}
@@ -71,7 +71,7 @@ const WorkflowStep: React.FC<{
 };
 
 const Connector: React.FC = () => (
-    <div className="h-16 w-px bg-gray-600 border border-dashed border-gray-500 ml-8 my-2"></div>
+    <div className="h-16 w-px bg-gray-300 dark:bg-gray-600 border border-dashed border-gray-400 dark:border-gray-500 ml-8 my-2"></div>
 );
 
 const Home: React.FC<HomeProps> = ({ setActiveView }) => {
@@ -141,9 +141,9 @@ const Home: React.FC<HomeProps> = ({ setActiveView }) => {
     ];
 
     return (
-        <div className="max-w-3xl mx-auto p-6 bg-gray-800 rounded-lg shadow-xl">
+        <div className="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
             <h2 className="text-4xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Creative Workflow</h2>
-            <p className="text-center text-gray-400 mb-10">Follow this path to create a complete video from scratch, or jump in at any step.</p>
+            <p className="text-center text-gray-600 dark:text-gray-400 mb-10">Follow this path to create a complete video from scratch, or jump in at any step.</p>
             
             <div className="flex flex-col">
                 {detailedWorkflowSteps.map((step, index) => (

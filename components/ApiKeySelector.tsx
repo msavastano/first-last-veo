@@ -66,18 +66,18 @@ const ApiKeySelector: React.FC<ApiKeySelectorProps> = ({ children, isVideoTabAct
 
   if (isVideoTabActive && !isKeySelected) {
     return (
-      <div className="max-w-2xl mx-auto text-center p-8 bg-gray-800 rounded-lg shadow-xl border border-yellow-500/50">
-        <h3 className="text-2xl font-bold text-yellow-400 mb-4">API Key Required for Video Generation</h3>
-        <p className="text-gray-300 mb-6">
+      <div className="max-w-2xl mx-auto text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-yellow-500/50">
+        <h3 className="text-2xl font-bold text-yellow-500 dark:text-yellow-400 mb-4">API Key Required for Video Generation</h3>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
           The Veo video generation model requires a valid API key with billing enabled. Please select your key to proceed.
         </p>
-        <p className="text-sm text-gray-400 mb-6">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
           For more information on billing, please visit the{' '}
-          <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:underline">
+          <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-yellow-500 dark:text-yellow-400 hover:underline">
             official documentation
           </a>.
         </p>
-        {error && <p className="text-red-400 mb-4">{error}</p>}
+        {error && <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>}
         <button
           onClick={handleSelectKey}
           className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-8 rounded-lg transition-transform transform hover:scale-105"

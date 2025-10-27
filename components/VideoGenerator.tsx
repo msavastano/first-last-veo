@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { generateImageWithImagen, generateLastFrameWithNano, generateVideoWithVeo } from '../services/geminiService';
 import Spinner from './Spinner';
@@ -133,18 +132,18 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   
   const ImagePickerModal = () => (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setIsPickerOpen(null)}>
-      <div className="bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
-        <h3 className="text-2xl font-bold mb-4 text-orange-400">Select an Image for {isPickerOpen === 'first' ? 'First' : 'Last'} Frame</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+        <h3 className="text-2xl font-bold mb-4 text-orange-500 dark:text-orange-400">Select an Image for {isPickerOpen === 'first' ? 'First' : 'Last'} Frame</h3>
         {savedImages.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {savedImages.map(image => (
-              <button key={image.id} onClick={() => handleSelectFromLibrary(image)} className="bg-gray-700 rounded-lg overflow-hidden transform hover:scale-105 transition-transform focus:ring-2 ring-orange-400">
+              <button key={image.id} onClick={() => handleSelectFromLibrary(image)} className="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden transform hover:scale-105 transition-transform focus:ring-2 ring-orange-400">
                 <img src={image.previewUrl} alt="Saved asset" className="w-full h-40 object-cover"/>
               </button>
             ))}
           </div>
         ) : (
-          <p className="text-gray-400 text-center py-8">Your library is empty. Save images from the Image Generator or Editor.</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center py-8">Your library is empty. Save images from the Image Generator or Editor.</p>
         )}
       </div>
     </div>
@@ -152,7 +151,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
 
   const renderChoice = () => (
     <div className="text-center">
-      <h3 className="text-xl font-semibold mb-4 text-gray-300">How would you like to create your video?</h3>
+      <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">How would you like to create your video?</h3>
       <div className="flex flex-col sm:flex-row justify-center gap-4">
         <button onClick={() => setWorkflow('generate')} className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">
           Generate Frames from a Prompt
@@ -172,17 +171,17 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="e.g., A spaceship landing on a mysterious alien planet with glowing flora"
-            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
+            className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
             rows={3}
             disabled={isLoadingFirst || isLoadingLast}
           />
            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end">
              <div>
-                <label htmlFor="savedPromptsGen" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
+                <label htmlFor="savedPromptsGen" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Load Saved Prompt</label>
                 <select
                     id="savedPromptsGen"
                     onChange={(e) => e.target.value && setPrompt(e.target.value)}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
+                    className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
                     disabled={isLoadingFirst || isLoadingLast || savedPrompts.length === 0}
                     value=""
                 >
@@ -191,12 +190,12 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                 </select>
             </div>
              <div>
-                <label htmlFor="aspectRatioVid" className="block text-sm font-medium text-gray-300 mb-1">Aspect Ratio</label>
+                <label htmlFor="aspectRatioVid" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Aspect Ratio</label>
                 <select
                     id="aspectRatioVid"
                     value={aspectRatio}
                     onChange={(e) => setAspectRatio(e.target.value as AspectRatio)}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
+                    className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
                     disabled={isLoadingFirst || isLoadingLast}
                 >
                     {aspectRatios.map(ar => <option key={ar} value={ar}>{ar}</option>)}
@@ -215,12 +214,12 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
 
       {(isLoadingFirst || isLoadingLast || firstFrame || lastFrame) && (
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="min-h-[300px] bg-gray-700/50 rounded-lg flex flex-col items-center justify-center p-4">
-            <h3 className="text-lg font-semibold text-gray-300 mb-2">First Frame</h3>
+          <div className="min-h-[300px] bg-gray-100 dark:bg-gray-700/50 rounded-lg flex flex-col items-center justify-center p-4">
+            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">First Frame</h3>
             {isLoadingFirst ? <Spinner /> : firstFrame && <img src={`data:image/png;base64,${firstFrame.base64}`} alt="Start Frame" className="max-w-full max-h-[40vh] rounded-lg"/>}
           </div>
-          <div className="min-h-[300px] bg-gray-700/50 rounded-lg flex flex-col items-center justify-center p-4">
-            <h3 className="text-lg font-semibold text-gray-300 mb-2">Last Frame</h3>
+          <div className="min-h-[300px] bg-gray-100 dark:bg-gray-700/50 rounded-lg flex flex-col items-center justify-center p-4">
+            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Last Frame</h3>
             {isLoadingLast ? <Spinner /> : lastFrame && <img src={`data:image/png;base64,${lastFrame.base64}`} alt="End Frame" className="max-w-full max-h-[40vh] rounded-lg"/>}
           </div>
         </div>
@@ -228,7 +227,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
 
       {generateStage === GenerateStage.FRAMES && !isLoadingFirst && !isLoadingLast && (
         <div className="mt-6 flex justify-center gap-4">
-           <button onClick={handleStartOver} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Start Over</button>
+           <button onClick={handleStartOver} className="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Start Over</button>
            <button onClick={handleGenerateVideo} className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg">Generate Video</button>
         </div>
       )}
@@ -238,7 +237,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   const renderUploadWorkflow = () => (
     <div className="space-y-6">
         <div>
-            <label htmlFor="prompt-upload" className="block text-sm font-medium text-gray-300 mb-1">Scene Description (Prompt)</label>
+            <label htmlFor="prompt-upload" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Scene Description (Prompt)</label>
             <div className="flex flex-col sm:flex-row gap-4 items-end">
                 <div className="w-full flex-grow">
                     <textarea
@@ -246,16 +245,16 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                         placeholder="e.g., A cat chasing a laser dot across the floor"
-                        className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
+                        className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
                         rows={3}
                     />
                 </div>
                  <div className="w-full sm:w-60">
-                    <label htmlFor="savedPromptsUpload" className="block text-sm font-medium text-gray-300 mb-1">Load Saved Prompt</label>
+                    <label htmlFor="savedPromptsUpload" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Load Saved Prompt</label>
                     <select
                         id="savedPromptsUpload"
                         onChange={(e) => e.target.value && setPrompt(e.target.value)}
-                        className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
+                        className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
                         disabled={savedPrompts.length === 0}
                         value=""
                     >
@@ -264,33 +263,33 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
                     </select>
                 </div>
             </div>
-             <p className="text-xs text-gray-400 mt-1">A prompt is still needed to guide the video generation between the frames.</p>
+             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">A prompt is still needed to guide the video generation between the frames.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg space-y-2">
-                <h3 className="text-lg font-semibold text-gray-300 mb-2">First Frame</h3>
-                <div className="w-full min-h-[200px] flex items-center justify-center aspect-video bg-gray-900/50 rounded">
+            <div className="flex flex-col items-center p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg space-y-2">
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">First Frame</h3>
+                <div className="w-full min-h-[200px] flex items-center justify-center aspect-video bg-gray-200 dark:bg-gray-900/50 rounded">
                     {firstFramePreviewUrl ? 
                         <img src={firstFramePreviewUrl} alt="First frame preview" className="max-w-full max-h-[30vh] rounded-lg" /> :
                         <p className="text-gray-500">Upload or load frame</p>
                     }
                 </div>
-                <button onClick={() => setIsPickerOpen('first')} disabled={savedImages.length === 0} className="w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed">Load from Library</button>
-                <label htmlFor="first-frame-upload" className="cursor-pointer w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors">
+                <button onClick={() => setIsPickerOpen('first')} disabled={savedImages.length === 0} className="w-full text-center p-3 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 rounded-lg transition-colors disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:cursor-not-allowed">Load from Library</button>
+                <label htmlFor="first-frame-upload" className="cursor-pointer w-full text-center p-3 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 rounded-lg transition-colors">
                     Upload from Device
                 </label>
                 <input id="first-frame-upload" type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'first')} />
             </div>
-            <div className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg space-y-2">
-                <h3 className="text-lg font-semibold text-gray-300 mb-2">Last Frame</h3>
-                <div className="w-full min-h-[200px] flex items-center justify-center aspect-video bg-gray-900/50 rounded">
+            <div className="flex flex-col items-center p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg space-y-2">
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Last Frame</h3>
+                <div className="w-full min-h-[200px] flex items-center justify-center aspect-video bg-gray-200 dark:bg-gray-900/50 rounded">
                     {lastFramePreviewUrl ? 
                         <img src={lastFramePreviewUrl} alt="Last frame preview" className="max-w-full max-h-[30vh] rounded-lg" /> :
                         <p className="text-gray-500">Upload or load frame</p>
                     }
                 </div>
-                <button onClick={() => setIsPickerOpen('last')} disabled={savedImages.length === 0} className="w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed">Load from Library</button>
-                <label htmlFor="last-frame-upload" className="cursor-pointer w-full text-center p-3 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors">
+                <button onClick={() => setIsPickerOpen('last')} disabled={savedImages.length === 0} className="w-full text-center p-3 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 rounded-lg transition-colors disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:cursor-not-allowed">Load from Library</button>
+                <label htmlFor="last-frame-upload" className="cursor-pointer w-full text-center p-3 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 rounded-lg transition-colors">
                      Upload from Device
                 </label>
                 <input id="last-frame-upload" type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'last')} />
@@ -298,18 +297,18 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
       </div>
       <div className="mt-6 flex flex-col items-center gap-4">
           <div>
-            <label htmlFor="aspectRatioUpload" className="block text-sm font-medium text-gray-300 mb-1 text-center">Aspect Ratio</label>
+            <label htmlFor="aspectRatioUpload" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 text-center">Aspect Ratio</label>
             <select
                 id="aspectRatioUpload"
                 value={aspectRatio}
                 onChange={(e) => setAspectRatio(e.target.value as AspectRatio)}
-                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
+                className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500"
             >
                 {aspectRatios.map(ar => <option key={ar} value={ar}>{ar}</option>)}
             </select>
            </div>
            <div className="flex justify-center gap-4 w-full">
-            <button onClick={handleStartOver} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Back</button>
+            <button onClick={handleStartOver} className="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Back</button>
             <button onClick={handleGenerateVideo} disabled={!firstFrame || !lastFrame || !prompt} className="bg-red-600 hover:bg-red-700 disabled:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg">Generate Video</button>
            </div>
       </div>
@@ -330,15 +329,15 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-gray-800 rounded-lg shadow-xl">
+    <div className="max-w-6xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
       {isPickerOpen && <ImagePickerModal />}
       <h2 className="text-3xl font-bold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">Video Generation</h2>
-      <p className="text-center text-gray-400 mb-8 h-5">{getSubtitle()}</p>
+      <p className="text-center text-gray-600 dark:text-gray-400 mb-8 h-5">{getSubtitle()}</p>
 
       {isLoadingVideo ? (
         <div className="flex flex-col items-center justify-center min-h-[300px]">
           <Spinner size="lg" />
-          <p className="text-lg text-gray-300 mt-4 animate-pulse">{videoStatus || 'Generating your video...'}</p>
+          <p className="text-lg text-gray-700 dark:text-gray-300 mt-4 animate-pulse">{videoStatus || 'Generating your video...'}</p>
         </div>
       ) : generatedVideoUrl ? (
         <div className="flex flex-col items-center">
@@ -347,7 +346,7 @@ const VideoGenerator: React.FC<{ apiKey: string }> = ({ apiKey }) => {
         </div>
       ) : (
           <div className="min-h-[400px]">
-            {error && <p className="text-red-400 my-4 text-center">{error}</p>}
+            {error && <p className="text-red-500 dark:text-red-400 my-4 text-center">{error}</p>}
             {!workflow && renderChoice()}
             {workflow === 'generate' && renderGenerateWorkflow()}
             {workflow === 'upload' && renderUploadWorkflow()}

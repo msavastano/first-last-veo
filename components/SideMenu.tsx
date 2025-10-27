@@ -134,9 +134,9 @@ const SideMenu: React.FC<SideMenuProps> = ({
 
   return (
     <nav
-      className={`bg-gray-800 p-4 flex-shrink-0 h-[calc(100vh-65px)] sticky top-[65px] z-10 flex flex-col transition-all duration-300 ease-in-out ${
+      className={`bg-white dark:bg-gray-800 p-4 flex-shrink-0 h-[calc(100vh-65px)] sticky top-[65px] z-10 flex flex-col transition-all duration-300 ease-in-out ${
         isCollapsed ? "w-20" : "w-64"
-      } md:hover:w-64`}
+      }`}
     >
       <div className="flex-grow">
         <ul className="space-y-2">
@@ -149,7 +149,7 @@ const SideMenu: React.FC<SideMenuProps> = ({
                 } ${
                   activeView === item.id
                     ? "bg-purple-600 text-white shadow-lg"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
                 }`}
                 title={isCollapsed ? item.label : undefined}
               >
@@ -162,7 +162,7 @@ const SideMenu: React.FC<SideMenuProps> = ({
       </div>
       <button
         onClick={() => setCollapsed(!isCollapsed)}
-        className={`w-full flex items-center gap-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 mt-4 border-t border-gray-700 pt-4 ${
+        className={`w-full flex items-center gap-3 p-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 mt-4 border-t border-gray-200 dark:border-gray-700 pt-4 ${
           isCollapsed ? "justify-center" : ""
         }`}
         title={isCollapsed ? "Expand Menu" : "Collapse Menu"}
