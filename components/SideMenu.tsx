@@ -118,9 +118,12 @@ const SideMenu: React.FC<SideMenuProps> = ({
   isCollapsed,
   setCollapsed,
 }) => {
+  const isCollapsedRef = React.useRef(isCollapsed);
+  isCollapsedRef.current = isCollapsed;
+
   React.useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768 && !isCollapsed) {
+      if (window.innerWidth < 768 && !isCollapsedRef.current) {
         setCollapsed(true);
       }
     };
@@ -130,7 +133,7 @@ const SideMenu: React.FC<SideMenuProps> = ({
     handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
-  }, [isCollapsed, setCollapsed]);
+  }, [setCollapsed]);
 
   return (
     <nav
