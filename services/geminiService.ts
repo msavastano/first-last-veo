@@ -19,7 +19,7 @@ export const generateImageWithImagen = async (prompt: string, aspectRatio: Aspec
       aspectRatio,
     },
   });
-  
+
   if (response.generatedImages && response.generatedImages.length > 0) {
     return response.generatedImages[0].image.imageBytes;
   }
@@ -55,38 +55,38 @@ export const editImageWithNano = async (prompt: string, originalImage: ImageData
 };
 
 export const generateLastFrameWithNano = async (prompt: string, firstFrame: ImageData, apiKey: string): Promise<string> => {
-    const ai = getAiClient(apiKey);
-    const fullPrompt = `Based on the provided image and the description "${prompt}", generate a logical final frame for a short video. The generated image should represent the end of the story or action.`;
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              data: firstFrame.base64,
-              mimeType: firstFrame.mimeType,
-            },
+  const ai = getAiClient(apiKey);
+  const fullPrompt = `Based on the provided image and the description "${prompt}", generate a logical final frame for a short video. The generated image should represent the end of the story or action.`;
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash-image',
+    contents: {
+      parts: [
+        {
+          inlineData: {
+            data: firstFrame.base64,
+            mimeType: firstFrame.mimeType,
           },
-          { text: fullPrompt },
-        ],
-      },
-      config: {
-        responseModalities: [Modality.IMAGE],
-      },
-    });
-  
-    for (const part of response.candidates[0].content.parts) {
-      if (part.inlineData) {
-        return part.inlineData.data;
-      }
+        },
+        { text: fullPrompt },
+      ],
+    },
+    config: {
+      responseModalities: [Modality.IMAGE],
+    },
+  });
+
+  for (const part of response.candidates[0].content.parts) {
+    if (part.inlineData) {
+      return part.inlineData.data;
     }
-    throw new Error("Last frame generation failed.");
-  };
+  }
+  throw new Error("Last frame generation failed.");
+};
 
 export const generateVideoWithVeo = async (
   prompt: string,
-  firstFrame: ImageData,
-  lastFrame: ImageData,
+  firstFrame: ImageData | null,
+  lastFrame: ImageData | null,
   aspectRatio: AspectRatio,
   onProgress: (status: string) => void,
   apiKey: string
@@ -94,23 +94,32 @@ export const generateVideoWithVeo = async (
   const ai = getAiClient(apiKey);
 
   onProgress("Initializing video generation...");
-  let operation = await ai.models.generateVideos({
+
+  const request: any = {
     model: 'veo-3.1-fast-generate-preview',
     prompt,
-    image: {
-      imageBytes: firstFrame.base64,
-      mimeType: firstFrame.mimeType,
-    },
     config: {
       numberOfVideos: 1,
       resolution: '720p',
       aspectRatio: aspectRatio,
-      lastFrame: {
-        imageBytes: lastFrame.base64,
-        mimeType: lastFrame.mimeType,
-      },
     }
-  });
+  };
+
+  if (firstFrame) {
+    request.image = {
+      imageBytes: firstFrame.base64,
+      mimeType: firstFrame.mimeType,
+    };
+  }
+
+  if (lastFrame) {
+    request.config.lastFrame = {
+      imageBytes: lastFrame.base64,
+      mimeType: lastFrame.mimeType,
+    };
+  }
+
+  let operation = await ai.models.generateVideos(request);
 
   const progressMessages = [
     "Warming up the digital director...",
@@ -130,7 +139,7 @@ export const generateVideoWithVeo = async (
   }
 
   if (operation.error) {
-      throw new Error(`Video generation failed: ${operation.error.message}`);
+    throw new Error(`Video generation failed: ${operation.error.message}`);
   }
 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
@@ -138,7 +147,7 @@ export const generateVideoWithVeo = async (
   if (!downloadLink) {
     throw new Error("Video generation completed but no download link was found.");
   }
-  
+
   onProgress("Fetching your masterpiece...");
   const videoResponse = await fetch(`${downloadLink}&key=${apiKey}`);
   if (!videoResponse.ok) {
